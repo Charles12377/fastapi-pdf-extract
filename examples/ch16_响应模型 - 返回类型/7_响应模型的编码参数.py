@@ -28,7 +28,8 @@ async def read_item(item_id: str):
 但如果它们并没有被实际存储，你可能希望在结果中省略这些默认值。
 
 使用 response_model_exclude_unset 参数
-"""from fastapi import FastAPI
+"""
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
