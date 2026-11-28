@@ -1,33 +1,22 @@
 from typing import Annotated
 
-from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI
 
 app = FastAPI()
 
 
-@app.post("/files/")
-async def create_files(files: Annotated[list[bytes], File()]):
-    return {"file_sizes": [len(file) for file in files]}
+async def common_parameters(q: str | None = None, skip: int = 0, limit: int = 100):
+    return {"q": q, "skip": skip, "limit": limit}
 
 
-@app.post("/uploadfiles/")
-async def create_upload_files(files: list[UploadFile]):
-    return {"filenames": [file.filename for file in files]}
+CommonsDep = Annotated[dict, Depends(common_parameters)]
 
 
-@app.get("/")
-async def main():
-    content = """
-<body>
-<form action="/files/" enctype="multipart/form-data" method="post">
-<input name="files" type="file" multiple>
-<input type="submit">
-</form>
-<form action="/uploadfiles/" enctype="multipart/form-data" method="post">
-<input name="files" type="file" multiple>
-<input type="submit">
-</form>
-</body>
-    """
-    return HTMLResponse(content=content)
+@app.get("/items/")
+async def read_items(commons: CommonsDep):
+    return commons
+
+
+@app.get("/users/")
+async def read_users(commons: CommonsDep):
+    return commons
